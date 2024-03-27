@@ -1,5 +1,6 @@
 package com.project.socialnetwork.controller;
 
+import com.project.socialnetwork.entity.Post;
 import com.project.socialnetwork.entity.User;
 import com.project.socialnetwork.entity.UserProfile;
 import com.project.socialnetwork.service.UserService;
@@ -21,9 +22,15 @@ public class UserController {
     }
 
     @PostMapping("/updateProfile/{user_id}")
-    public ResponseEntity<UserProfile> updateProfile(@PathVariable("user_id") Long user_id, @RequestBody UserProfile userProfile){
-        UserProfile updatedProfile = userService.updateProfile(userProfile, user_id);
+    public ResponseEntity<UserProfile> updateProfile(@RequestBody UserProfile userProfile, @PathVariable Long user_id){
+        UserProfile updatedProfile = userService.updateProfile(userProfile,user_id);
         return ResponseEntity.ok(updatedProfile);
+    }
+
+    @PostMapping("/post/{user_id}")
+    public ResponseEntity<Post> post(@RequestBody Post postDetails, @PathVariable Long user_id){
+        Post post = userService.postDetails(postDetails, user_id);
+        return ResponseEntity.ok(post);
     }
 
 }
