@@ -1,16 +1,20 @@
 package com.project.socialnetwork.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Entity
+@Table(name = "app_user")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -22,4 +26,6 @@ public class User {
     private String email;
     private String phoneNum;
 
+    @OneToMany(mappedBy = "user")
+    private Set<FriendsList> friends;
 }
