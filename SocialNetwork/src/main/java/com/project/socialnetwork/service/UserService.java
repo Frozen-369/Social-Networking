@@ -20,7 +20,7 @@ public class UserService {
         return userDao.save(user);
     }
 
-<<<<<<< Updated upstream
+
     public UserProfile updateProfile(UserProfile userProfile, Long user_id){
         User user = userDao.findById(user_id).get();
         userProfile.setUser(user);
@@ -28,7 +28,6 @@ public class UserService {
     }
 
 
-=======
 
     public User getUserById(Long id){
         User user = userDao.findById(id).orElse(null);
@@ -101,6 +100,4 @@ public class UserService {
         postDao.delete(post);
     }
 
-
->>>>>>> Stashed changes
 }
