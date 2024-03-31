@@ -22,12 +22,6 @@ public class UserController {
         return ResponseEntity.ok().body(ResponseUtils.USER_SUCCESS);
     }
 
-    @PostMapping("/updateProfile/{user_id}")
-    public ResponseEntity<UserProfile> updateProfile(@PathVariable("user_id") Long user_id, @RequestBody UserProfile userProfile){
-        UserProfile updatedProfile = userService.updateProfile(userProfile, user_id);
-        return ResponseEntity.ok(updatedProfile);
-    }
-
     @GetMapping("/getUser/{user_id}")
     public ResponseEntity<String> getUserById(@PathVariable Long user_id){
         User user = userService.getUserById(user_id);
@@ -35,12 +29,15 @@ public class UserController {
 
     }
 
+
+
     @PostMapping("/{user_id}/createProfile")
     public ResponseEntity<String> createProfile(@RequestBody UserProfile userProfile, @PathVariable Long user_id){
         userService.createProfile(userProfile,user_id);
         return ResponseEntity.ok().body(ResponseUtils.USER_PROFILE_CREATE);
     }
 
+    
     @GetMapping("/getUserProfile/{userProfile_id}")
     public ResponseEntity<String> getUserProfileById(@PathVariable Long userProfile_id){
         User user = userService.getUserById(userProfile_id);
@@ -54,6 +51,7 @@ public class UserController {
         userService.updateProfile(userProfile);
         return ResponseEntity.ok().body(ResponseUtils.USER_PROFILE_UPDATE);
     }
+
 
     @PostMapping("/post/{user_id}")
     public ResponseEntity<String> post(@RequestBody Post postDetails, @PathVariable Long user_id){
@@ -75,4 +73,7 @@ public class UserController {
     }
 
 
+
 }
+
+

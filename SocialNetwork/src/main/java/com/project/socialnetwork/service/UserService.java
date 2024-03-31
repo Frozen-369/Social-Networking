@@ -36,7 +36,6 @@ public class UserService {
     }
 
 
-
     public User getUserById(Long id){
         User user = userDao.findById(id).orElse(null);
         if(user == null) {
@@ -86,7 +85,11 @@ public class UserService {
     }
 
 
+
+
+
     public void postDetails(Post postDetails, Long user_id) {
+
         User user = userDao.findById(user_id).get();
         postDetails.setUser(user);
         postDao.save(postDetails);
