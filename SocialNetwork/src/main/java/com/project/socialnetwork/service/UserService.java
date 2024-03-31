@@ -7,7 +7,6 @@ import com.project.socialnetwork.entity.Post;
 import com.project.socialnetwork.entity.User;
 import com.project.socialnetwork.entity.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -24,20 +23,19 @@ public class UserService {
     @Autowired
     private PostDao postDao;
 
+
     public User registerUser(User user){
         return userDao.save(user);
     }
 
-    public UserProfile updateProfile(UserProfile userProfile, Long userId){
-        User user = userDao.findById(userId).get();
+
+    public UserProfile updateProfile(UserProfile userProfile, Long user_id){
+        User user = userDao.findById(user_id).get();
         userProfile.setUser(user);
         return userProfileDao.save(userProfile);
     }
 
 
-<<<<<<< Updated upstream
-=======
-=======
 
     public User getUserById(Long id){
         User user = userDao.findById(id).orElse(null);
@@ -46,15 +44,15 @@ public class UserService {
         }
         return user;
     }
-    public UserProfile createProfile(UserProfile userProfile, Long userId){
+    public void createProfile(UserProfile userProfile, Long userId){
         Optional<User> userOptional = Optional.ofNullable(getUserById(userId));
         if(userOptional.isPresent()){
             User user = userOptional.get();
             userProfile.setUser(user);
-            return userProfileDao.save(userProfile);
+            userProfileDao.save(userProfile);
         }
         else{
-            throw new ChangeSetPersister.NotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
 
     }
@@ -88,10 +86,26 @@ public class UserService {
     }
 
 
->>>>>>> Stashed changes
-    public Post postDetails(Post postDetails, Long user_id) {
+    public void postDetails(Post postDetails, Long user_id) {
         User user = userDao.findById(user_id).get();
         postDetails.setUser(user);
-        return postDao.save(postDetails);
+        postDao.save(postDetails);
     }
+
+    public Post getPostById(Long postId) {
+        Post post = postDao.findById(postId).orElse(null);
+        if(post == null) {
+            throw new NullPointerException("User is empty");
+        }
+        return post;
+    }
+
+    public void deletePost(Long postId) {
+        Post post = getPostById(postId);
+        if(post == null){
+            throw new NullPointerException("Id cannot be empty");
+        }
+        postDao.delete(post);
+    }
+
 }

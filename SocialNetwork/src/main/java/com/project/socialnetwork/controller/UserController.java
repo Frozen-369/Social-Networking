@@ -4,6 +4,7 @@ import com.project.socialnetwork.entity.Post;
 import com.project.socialnetwork.entity.User;
 import com.project.socialnetwork.entity.UserProfile;
 import com.project.socialnetwork.service.UserService;
+import com.project.socialnetwork.utils.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,23 +17,16 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/registerUser")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
-        User savedUser = userService.registerUser(user);
-        return ResponseEntity.ok(savedUser);
+    public ResponseEntity<String> registerUser(@RequestBody User user) {
+        userService.registerUser(user);
+        return ResponseEntity.ok().body(ResponseUtils.USER_SUCCESS);
     }
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
     @PostMapping("/updateProfile/{user_id}")
-    public ResponseEntity<UserProfile> updateProfile(@RequestBody UserProfile userProfile, @PathVariable Long user_id){
-        UserProfile updatedProfile = userService.updateProfile(userProfile,user_id);
+    public ResponseEntity<UserProfile> updateProfile(@PathVariable("user_id") Long user_id, @RequestBody UserProfile userProfile){
+        UserProfile updatedProfile = userService.updateProfile(userProfile, user_id);
         return ResponseEntity.ok(updatedProfile);
     }
-
-<<<<<<< Updated upstream
-=======
 
     @GetMapping("/getUser/{user_id}")
     public ResponseEntity<String> getUserById(@PathVariable Long user_id){
@@ -61,15 +55,12 @@ public class UserController {
         return ResponseEntity.ok().body(ResponseUtils.USER_PROFILE_UPDATE);
     }
 
->>>>>>> Stashed changes
     @PostMapping("/post/{user_id}")
-    public ResponseEntity<Post> post(@RequestBody Post postDetails, @PathVariable Long user_id){
-        Post post = userService.postDetails(postDetails, user_id);
-        return ResponseEntity.ok(post);
+    public ResponseEntity<String> post(@RequestBody Post postDetails, @PathVariable Long user_id){
+        userService.postDetails(postDetails, user_id);
+        return ResponseEntity.ok().body(ResponseUtils.POST_CREATE);
     }
 
-<<<<<<< Updated upstream
-=======
     @GetMapping("/getPost/{post_id}")
     public ResponseEntity<String> getPostById(@PathVariable Long post_id){
         Post post = userService.getPostById(post_id);
@@ -83,5 +74,5 @@ public class UserController {
         return ResponseEntity.ok().body(ResponseUtils.DELETE);
     }
 
->>>>>>> Stashed changes
+
 }
