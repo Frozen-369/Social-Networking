@@ -41,12 +41,12 @@ public class FriendsListController {
     }
 
     @PostMapping("/requests")
-    public ResponseEntity<String> sendFriendRequest(@RequestParam Long senderId, @RequestParam Long receiverId) {
-        friendListService.sendFriendRequest(senderId, receiverId);
+    public ResponseEntity<String> sendFriendRequest(@RequestBody FriendRequest friendRequest) {
+        friendListService.sendFriendRequest(friendRequest);
         return ResponseEntity.ok("Friend request sent successfully");
     }
     @PostMapping("/addFriend")
-    public ResponseEntity<String> addFriend(@RequestParam Long senderId, @RequestParam Long receiverId) {
+    public ResponseEntity<String> addFriend(@RequestBody FriendsList friendsList,@RequestParam Long senderId, @RequestParam Long receiverId) {
         friendListService.addFriend(senderId, receiverId);
         return ResponseEntity.ok("Friend added successfully.");
     }

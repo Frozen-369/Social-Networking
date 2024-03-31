@@ -34,13 +34,12 @@ public class FriendListService {
         friendsListRepo.deleteById(friendId);
     }
 
-    public void sendFriendRequest(Long senderId, Long receiverId) {
-        User sender = userDao.findById(senderId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + senderId));
-        User receiver = userDao.findById(receiverId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + receiverId));
+    public void sendFriendRequest(FriendRequest friendRequest) {
 
-        if (senderId.equals(receiverId)) {
+        User sender = friendRequest.getSender();
+        User receiver = friendRequest.getReceiver();
+
+        if (sender.equals(receiver)) {
             throw new IllegalArgumentException("Sender and receiver cannot be the same user.");
         }
 
@@ -49,11 +48,11 @@ public class FriendListService {
             throw new IllegalArgumentException("Friend request already sent.");
         }
 
-        FriendRequest friendRequest = new FriendRequest();
-        friendRequest.setSender(sender);
-        friendRequest.setReceiver(receiver);
-        friendRequest.setStatus(RequestStatus.PENDING);
-        friendRequestRepo.save(friendRequest);
+        FriendRequest friendRequest1 = new FriendRequest();
+        friendRequest1.setSender(sender);
+        friendRequest1.setReceiver(receiver);
+        friendRequest1.setStatus(RequestStatus.PENDING);
+        friendRequestRepo.save(friendRequest1);
     }
 
     public void processFriendRequest(Long requestId, boolean accept) {
