@@ -21,14 +21,12 @@ public class UserController {
         return ResponseEntity.ok().body(ResponseUtils.USER_SUCCESS);
     }
 
-<<<<<<< Updated upstream
     @PostMapping("/updateProfile/{user_id}")
     public ResponseEntity<UserProfile> updateProfile(@PathVariable("user_id") Long user_id, @RequestBody UserProfile userProfile){
         UserProfile updatedProfile = userService.updateProfile(userProfile, user_id);
         return ResponseEntity.ok(updatedProfile);
     }
 
-=======
     @GetMapping("/getUser/{user_id}")
     public ResponseEntity<String> getUserById(@PathVariable Long user_id){
         User user = userService.getUserById(user_id);
@@ -75,5 +73,5 @@ public class UserController {
         return ResponseEntity.ok().body(ResponseUtils.DELETE);
     }
 
->>>>>>> Stashed changes
+
 }
