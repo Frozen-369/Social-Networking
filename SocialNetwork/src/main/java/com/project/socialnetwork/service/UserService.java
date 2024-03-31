@@ -52,7 +52,7 @@ public class UserService {
             return userProfileDao.save(userProfile);
         }
         else{
-            throw new ChangeSetPersister.NotFoundException("User not found");
+            throw new NotFoundException("User not found");
         }
 
     }
