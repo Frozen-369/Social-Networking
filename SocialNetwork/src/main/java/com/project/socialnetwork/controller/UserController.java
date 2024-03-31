@@ -21,18 +21,15 @@ public class UserController {
         return ResponseEntity.ok(savedUser);
     }
 
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
+
     @PostMapping("/updateProfile/{user_id}")
     public ResponseEntity<UserProfile> updateProfile(@RequestBody UserProfile userProfile, @PathVariable Long user_id){
         UserProfile updatedProfile = userService.updateProfile(userProfile,user_id);
         return ResponseEntity.ok(updatedProfile);
     }
 
-<<<<<<< Updated upstream
-=======
+
 
     @GetMapping("/getUser/{user_id}")
     public ResponseEntity<String> getUserById(@PathVariable Long user_id){
@@ -61,15 +58,13 @@ public class UserController {
         return ResponseEntity.ok().body(ResponseUtils.USER_PROFILE_UPDATE);
     }
 
->>>>>>> Stashed changes
+
     @PostMapping("/post/{user_id}")
     public ResponseEntity<Post> post(@RequestBody Post postDetails, @PathVariable Long user_id){
         Post post = userService.postDetails(postDetails, user_id);
         return ResponseEntity.ok(post);
     }
 
-<<<<<<< Updated upstream
-=======
     @GetMapping("/getPost/{post_id}")
     public ResponseEntity<String> getPostById(@PathVariable Long post_id){
         Post post = userService.getPostById(post_id);
@@ -82,6 +77,4 @@ public class UserController {
         userService.deletePost(post_id);
         return ResponseEntity.ok().body(ResponseUtils.DELETE);
     }
-
->>>>>>> Stashed changes
 }
