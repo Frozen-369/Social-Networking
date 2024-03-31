@@ -35,9 +35,7 @@ public class UserService {
     }
 
 
-<<<<<<< Updated upstream
-=======
-=======
+
 
     public User getUserById(Long id){
         User user = userDao.findById(id).orElse(null);
@@ -88,7 +86,6 @@ public class UserService {
     }
 
 
->>>>>>> Stashed changes
     public Post postDetails(Post postDetails, Long user_id) {
         User user = userDao.findById(user_id).get();
         postDetails.setUser(user);
