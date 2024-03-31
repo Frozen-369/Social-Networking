@@ -27,10 +27,7 @@ public class FriendRequest {
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
 
-    // Constructor to map fields from FriendsList entity
-    public FriendRequest(FriendsList friendsList) {
-        this.sender = friendsList.getUser();
-        this.receiver = friendsList.getFriend();
-        this.status = friendsList.getStatus();
-    }
+    @OneToOne
+    @JoinColumn(name = "friends_list_id")
+    private FriendsList friendsList;
 }

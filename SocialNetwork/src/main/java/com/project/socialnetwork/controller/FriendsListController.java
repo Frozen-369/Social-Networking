@@ -45,6 +45,12 @@ public class FriendsListController {
         friendListService.sendFriendRequest(senderId, receiverId);
         return ResponseEntity.ok("Friend request sent successfully");
     }
+    @PostMapping("/addFriend")
+    public ResponseEntity<String> addFriend(@RequestParam Long senderId, @RequestParam Long receiverId) {
+        friendListService.addFriend(senderId, receiverId);
+        return ResponseEntity.ok("Friend added successfully.");
+    }
+
 }
 
 

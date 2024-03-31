@@ -44,6 +44,11 @@ public class FriendListService {
             throw new IllegalArgumentException("Sender and receiver cannot be the same user.");
         }
 
+        // Check if friend request already exists
+        if (friendRequestRepo.existsBySenderAndReceiver(sender, receiver)) {
+            throw new IllegalArgumentException("Friend request already sent.");
+        }
+
         FriendRequest friendRequest = new FriendRequest();
         friendRequest.setSender(sender);
         friendRequest.setReceiver(receiver);
@@ -56,17 +61,25 @@ public class FriendListService {
                 .orElseThrow(() -> new IllegalArgumentException("Friend request not found."));
 
         if (accept) {
-            FriendsList friendsList = new FriendsList();
-            friendsList.setUser(friendRequest.getSender());
-            friendsList.setFriend(friendRequest.getReceiver());
-            friendsList.setStatus(RequestStatus.ACCEPTED);
-            friendsList.setFriendsSince(LocalDate.now());
-            friendsListRepo.save(friendsList);
+            addFriend(friendRequest.getSender().getUser_id(), friendRequest.getReceiver().getUser_id());
         }
 
         friendRequestRepo.delete(friendRequest);
     }
 
+    public void addFriend(Long senderId, Long receiverId) {
+        User sender = userDao.findById(senderId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + senderId));
+        User receiver = userDao.findById(receiverId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + receiverId));
+
+        FriendsList friendsList = new FriendsList();
+        friendsList.setUser(sender);
+        friendsList.setFriend(receiver);
+        friendsList.setStatus(RequestStatus.ACCEPTED);
+        friendsList.setFriendsSince(LocalDate.now());
+        friendsListRepo.save(friendsList);
+    }
     public User searchUser(Long userId) {
         Optional<User> userOptional = userDao.findById(userId);
         if (userOptional.isPresent()) {

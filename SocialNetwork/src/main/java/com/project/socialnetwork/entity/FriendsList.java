@@ -34,4 +34,8 @@ public class FriendsList {
 
     @Column(name = "friends_since")
     private LocalDate friendsSince;
+
+    @OneToOne(mappedBy = "friendsList", cascade = CascadeType.ALL)
+    private FriendRequest friendRequest;
+
 }
