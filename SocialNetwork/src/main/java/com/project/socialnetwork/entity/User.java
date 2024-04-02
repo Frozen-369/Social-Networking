@@ -30,9 +30,4 @@ public class User {
     @OneToMany(mappedBy = "friend")
     private List<FriendsList> friends;
 
-    @OneToMany(mappedBy = "friend")
-    private List<FriendsList> senderID;
-
-    @OneToMany(mappedBy = "user")
-    private List<Like> likes;
 }

@@ -21,8 +21,9 @@ public class Like {
     @JoinColumn(name = "post_id")
     private Post post;
 
+
     @Column(name = "user_id")
-    private Long userId;
+    private Long user_Id;
 
 
 }

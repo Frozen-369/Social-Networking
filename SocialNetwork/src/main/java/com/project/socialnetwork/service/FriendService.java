@@ -21,6 +21,7 @@ public class FriendService {
     private final FriendDao friendDao;
 
     private final UserDao userDao;
+
     private static final Logger logger = LoggerFactory.getLogger(FriendService.class);
 
     @Autowired
@@ -37,12 +38,12 @@ public class FriendService {
         return List.of();
     }
 
-    public void unFriend(Long userId, Long friendsId) {
-        if (isFriend(userId, friendsId)) {
-            friendDao.deleteBySenderIDUser_idAndFriendUseruser_id(userId, friendsId);
-            logger.info("User with ID {} unfriended user with ID {}", userId, friendsId);
+    public void unFriend(Long userId, Long friendId) {
+        if (isFriend(userId, friendId)) {
+            friendDao.deleteBySenderIDUserIdAndFriendUserId(userId, friendId);
+            logger.info("User with ID {} unfriended user with ID {}", userId, friendId);
         } else {
-            logger.warn("User with ID {} attempted to unfriend user with ID {}, but they are not friends", userId, friendsId);
+            logger.warn("User with ID {} attempted to unfriend user with ID {}, but they are not friends", userId, friendId);
         }
     }
 
@@ -59,7 +60,6 @@ public class FriendService {
         User friend = friendOptional.get();
 
         if (areFriends(user, friend)) {
-            ResponseEntity.badRequest().body(ResponseUtils.ALREADY_FRIENDS);
             return ResponseEntity.badRequest().body(ResponseUtils.ALREADY_FRIENDS);
         }
 
@@ -75,20 +75,21 @@ public class FriendService {
     }
 
     private boolean areFriends(User user, User friend) {
-        return friendDao.existsBySenderIDUser_idAndFriendUseruser_id(user, friend)
-                || friendDao.existsBySenderIDUser_idAndFriendUseruser_id(friend, user);
+        return friendDao.existsBySenderIDUserIdAndFriendUserId(user, friend)
+                || friendDao.existsBySenderIDUserIdAndFriendUserId(friend, user);
     }
 
     private boolean isFriend(Long userId, Long friendId) {
-        return friendDao.findBySenderIDUser_idAndFriendUseruser_id(userId, friendId);
+        return friendDao.findBySenderIDUserIdAndFriendUserId(userId, friendId);
     }
 
     public ResponseEntity<String> acceptFriendRequest(Long userId, Long friendId) {
-        if (!friendDao.existsBySenderIDUser_idAndFriendUseruser_id(friendId, userId)) {
+        FriendsList friendship = friendDao.findBySenderIDuser_idandFrienduser_id(friendId, userId);
+
+        if (friendship == null) {
             return ResponseEntity.badRequest().body(ResponseUtils.FRIEND_REQUEST_NOT_FOUND);
         }
 
-        FriendsList friendship = friendDao.findBySenderIDAndFriend(friendId, userId);
         friendship.setRequestStatus(RequestStaus.ACCEPTED);
         friendship.setDate(LocalDate.now());
 

@@ -20,7 +20,7 @@ public class UserProfile {
     private String birthday;
 
     @OneToOne
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user_id")
     private User user;
 
 

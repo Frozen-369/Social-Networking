@@ -30,7 +30,7 @@ public class LikeService {
         if (post != null && user != null) {
             Like like = new Like();
             like.setPost(post);
-            like.setUserId(user.getUser_id());
+            like.setUser_Id(userId);
             likeDao.save(like);
         }
     }
