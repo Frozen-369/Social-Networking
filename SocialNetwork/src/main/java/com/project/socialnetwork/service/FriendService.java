@@ -84,7 +84,7 @@ public class FriendService {
     }
 
     public ResponseEntity<String> acceptFriendRequest(Long userId, Long friendId) {
-        FriendsList friendship = friendDao.findBySenderIDuser_idandFrienduser_id(friendId, userId);
+        FriendsList friendship = friendDao.findBySenderIDUser_IdAndFriendUser_Id(friendId, userId);
 
         if (friendship == null) {
             return ResponseEntity.badRequest().body(ResponseUtils.FRIEND_REQUEST_NOT_FOUND);

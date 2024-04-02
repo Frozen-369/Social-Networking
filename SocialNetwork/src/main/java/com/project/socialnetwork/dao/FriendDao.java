@@ -17,5 +17,5 @@ public interface FriendDao extends JpaRepository<FriendsList, Long> {
 
     boolean findBySenderIDUserIdAndFriendUserId(Long userId, Long friendId);
 
-    FriendsList findBySenderIDuser_idandFrienduser_id(Long friendId, Long userId);
+    FriendsList findBySenderIDUser_IdAndFriendUser_Id(Long userId, Long friendId);
 }
