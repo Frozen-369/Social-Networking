@@ -21,9 +21,18 @@ public class User {
     private String email;
     private String phoneNum;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user")
     private UserProfile userProfile;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user")
     private List<Post> posts;
+
+    @OneToMany(mappedBy = "friend")
+    private List<FriendsList> friends;
+
+    @OneToMany(mappedBy = "friend")
+    private List<FriendsList> senderID;
+
+    @OneToMany(mappedBy = "user")
+    private List<Like> likes;
 }

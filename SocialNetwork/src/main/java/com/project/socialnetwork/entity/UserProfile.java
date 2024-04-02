@@ -19,8 +19,8 @@ public class UserProfile {
     private String address;
     private String birthday;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @OneToOne
+    @JoinColumn(name = "user")
     private User user;
 
 

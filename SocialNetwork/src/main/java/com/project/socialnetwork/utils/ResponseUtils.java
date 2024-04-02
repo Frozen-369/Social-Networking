@@ -7,8 +7,14 @@ public class ResponseUtils {
     public static final String USER_PROFILE_UPDATE = "User Profile Updated Successfully";
     public static final String POST_CREATE = "Post Created Successfully";
     public static final String DELETE = "Deleted Successfully";
-
-
-
-
+    public static final String USER_FOUND="User found ";
+    public static final String FRIEND_REQUEST_SENT="Succcessfully sent Friend Request";
+    public static  final String USER_UNFRIEND ="User is has been removed from friends list";
+    public static final String USER_NOT_FRIEND = "Users are not friends with eachother" ;
+    public static final String ALREADY_FRIENDS = "Users are already friends";
+    public static final String USER_EMPTY = "User or Friend Id cannot be empty" ;
+    public static final String FRIEND_REQUEST_NOT_FOUND = "Friend Request Id not Found";
+    public static final String FRIEND_REQUEST_ACCEPTED = "Friend Request has been Accepted";
+    public static final String POST_LIKED = "Post has been liked" ;
+    public static final String POST_UNLIKED = "Post has been unliked";
 }
