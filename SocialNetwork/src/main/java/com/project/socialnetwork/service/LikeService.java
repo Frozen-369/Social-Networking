@@ -3,7 +3,7 @@ package com.project.socialnetwork.service;
 import com.project.socialnetwork.dao.LikeDao;
 import com.project.socialnetwork.dao.PostDao;
 import com.project.socialnetwork.dao.UserDao;
-import com.project.socialnetwork.entity.Like;
+import com.project.socialnetwork.entity.Likes;
 import com.project.socialnetwork.entity.Post;
 import com.project.socialnetwork.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +28,10 @@ public class LikeService {
         User user = userDao.findById(userId).orElse(null);
 
         if (post != null && user != null) {
-            Like like = new Like();
-            like.setPost(post);
-            like.setUser_Id(userId);
-            likeDao.save(like);
+            Likes likes = new Likes();
+            likes.setPost(post);
+            likes.setUser_Id(userId);
+            likeDao.save(likes);
         }
     }
 

@@ -82,33 +82,33 @@ public class UserController {
         return ResponseEntity.ok().body(ResponseUtils.DELETE);
     }
 
-    @GetMapping("{user_id}/allfriends")
-    public ResponseEntity<List<FriendsList>> seeFriendGroup(@PathVariable Long userId) {
-        List<FriendsList> friendsList = friendsService.getAllFriends(userId);
+    @GetMapping("/{user_id}/allfriends")
+    public ResponseEntity<List<FriendsList>> seeFriendGroup(@PathVariable User user) {
+        List<FriendsList> friendsList = friendsService.getAllFriends(user.getUserId());
         return ResponseEntity.ok().body(friendsList);
     }
 
-    @DeleteMapping("{user_id}/allfriends/{friends_id}")
-    public ResponseEntity<String> unFriend(@PathVariable Long userId, @PathVariable Long friendsId) {
-        friendsService.unFriend(userId, friendsId);
+    @DeleteMapping("/{user_id}/allfriends/{friends_id}")
+    public ResponseEntity<String> unFriend(@PathVariable User user, @PathVariable User friends) {
+        friendsService.unFriend(user, friends);
         return ResponseEntity.ok().body(ResponseUtils.USER_UNFRIEND);
     }
 
-    @PostMapping("{user_id}/sendRequest/{friends_id}")
-    public ResponseEntity<String> sendRequest(@PathVariable Long userId, @PathVariable Long friendsId){
-        friendsService.sendFriendRequest(userId, friendsId);
+    @PostMapping("/{user_id}/sendRequest/{friends_id}")
+    public ResponseEntity<String> sendRequest(@PathVariable User user, @PathVariable User friends){
+        friendsService.sendFriendRequest(user, friends);
         return ResponseEntity.ok().body(ResponseUtils.FRIEND_REQUEST_SENT);
     }
 
     @PostMapping("/post/{post_id}/like/{user_id}")
-    public ResponseEntity<String> likePost(@PathVariable Long post_id, @PathVariable Long user_id){
-        likeService.likePost(post_id, user_id);
+    public ResponseEntity<String> likePost(@PathVariable Long post_id, @PathVariable User user){
+        likeService.likePost(post_id, user.getUserId());
         return ResponseEntity.ok().body(ResponseUtils.POST_LIKED);
     }
 
     @DeleteMapping("/post/{post_id}/unlike/{user_id}")
-    public ResponseEntity<String> unlikePost(@PathVariable Long post_id, @PathVariable Long user_id){
-        likeService.unlikePost(post_id, user_id);
+    public ResponseEntity<String> unlikePost(@PathVariable Long post_id, @PathVariable User user){
+        likeService.unlikePost(post_id, user.getUserId());
         return ResponseEntity.ok().body(ResponseUtils.POST_UNLIKED);
     }
 

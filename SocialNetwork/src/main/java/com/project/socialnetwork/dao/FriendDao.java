@@ -5,17 +5,12 @@ import com.project.socialnetwork.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface FriendDao extends JpaRepository<FriendsList, Long> {
 
-    void deleteBySenderIDUserIdAndFriendUserId(Long userId, Long friendsId);
+    void deletBySenderAndFriend(User userId, User friendId);
 
-    boolean existsBySenderIDUserIdAndFriendUserId(User user, User friend);
-
-//    FriendsList findBySenderIDUser_IdAndFriendUser_Id(Long userId, Long friendId);
-
-
-    boolean findBySenderIDUserIdAndFriendUserId(Long userId, Long friendId);
-
-    FriendsList findBySenderIDUser_IdAndFriendUser_Id(Long userId, Long friendId);
+    void deleteByFriend(List<FriendsList> friends);
 }

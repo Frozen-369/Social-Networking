@@ -1,7 +1,9 @@
 package com.project.socialnetwork.service;
 
+import com.project.socialnetwork.dao.CustomFriendDao;
 import com.project.socialnetwork.dao.FriendDao;
 import com.project.socialnetwork.dao.UserDao;
+import com.project.socialnetwork.entity.CustomFriends;
 import com.project.socialnetwork.entity.FriendsList;
 import com.project.socialnetwork.entity.RequestStaus;
 import com.project.socialnetwork.entity.User;
@@ -22,12 +24,15 @@ public class FriendService {
 
     private final UserDao userDao;
 
+    private  final CustomFriendDao customFriends;
+
     private static final Logger logger = LoggerFactory.getLogger(FriendService.class);
 
     @Autowired
-    public FriendService(FriendDao friendDao, UserDao userDao) {
+    public FriendService(FriendDao friendDao, UserDao userDao,CustomFriendDao customFriends) {
         this.friendDao = friendDao;
         this.userDao = userDao;
+        this.customFriends = customFriends;
     }
 
     public List<FriendsList> getAllFriends(Long userId) {
@@ -37,54 +42,40 @@ public class FriendService {
         }
         return List.of();
     }
-
-    public void unFriend(Long userId, Long friendId) {
-        if (isFriend(userId, friendId)) {
-            friendDao.deleteBySenderIDUserIdAndFriendUserId(userId, friendId);
-            logger.info("User with ID {} unfriended user with ID {}", userId, friendId);
+    public void unFriend(User user, User friend) {
+        if (areFriends(user, friend)) {
+            customFriends.deletBySenderAndFriend(user, friend);
+            friendDao.deleteByFriend(friend.getFriends());
+            logger.info("User with ID {} unfriended user with ID {}", user.getUserId(), friend.getFriends());
         } else {
-            logger.warn("User with ID {} attempted to unfriend user with ID {}, but they are not friends", userId, friendId);
+            logger.warn("User with ID {} attempted to unfriend user with ID {}, but they are not friends", user.getUserId(), friend.getFriends());
         }
     }
 
-    public ResponseEntity<String> sendFriendRequest(Long userId, Long friendId) {
-        Optional<User> userOptional = userDao.findById(userId);
-        Optional<User> friendOptional = userDao.findById(friendId);
-
-        if (userOptional.isEmpty() || friendOptional.isEmpty()) {
-            logger.error("User or friend is empty while sending friend request");
+    public ResponseEntity<String> sendFriendRequest(User user, User friend) {
+        if (user == null || friend == null) {
+            logger.error("User or friend is null");
             return ResponseEntity.badRequest().body(ResponseUtils.USER_EMPTY);
         }
-
-        User user = userOptional.get();
-        User friend = friendOptional.get();
 
         if (areFriends(user, friend)) {
             return ResponseEntity.badRequest().body(ResponseUtils.ALREADY_FRIENDS);
         }
 
-        FriendsList friendship = new FriendsList();
+        CustomFriends friendship = new CustomFriends();
         friendship.setFriend(friend);
-        friendship.setSenderID(user);
+        friendship.setSender(user);
         friendship.setRequestStatus(RequestStaus.PENDING);
         friendship.setDate(LocalDate.now());
 
         friendDao.save(friendship);
+        customFriends.save(friendship);
 
         return ResponseEntity.ok().body(ResponseUtils.FRIEND_REQUEST_SENT);
     }
 
-    private boolean areFriends(User user, User friend) {
-        return friendDao.existsBySenderIDUserIdAndFriendUserId(user, friend)
-                || friendDao.existsBySenderIDUserIdAndFriendUserId(friend, user);
-    }
-
-    private boolean isFriend(Long userId, Long friendId) {
-        return friendDao.findBySenderIDUserIdAndFriendUserId(userId, friendId);
-    }
-
-    public ResponseEntity<String> acceptFriendRequest(Long userId, Long friendId) {
-        FriendsList friendship = friendDao.findBySenderIDUser_IdAndFriendUser_Id(friendId, userId);
+    public ResponseEntity<String> acceptFriendRequest(User user, User friend) {
+        CustomFriends friendship = customFriends.existsBySenderAndFriend(friend, user);
 
         if (friendship == null) {
             return ResponseEntity.badRequest().body(ResponseUtils.FRIEND_REQUEST_NOT_FOUND);
@@ -94,7 +85,14 @@ public class FriendService {
         friendship.setDate(LocalDate.now());
 
         friendDao.save(friendship);
+        customFriends.save(friendship);
 
         return ResponseEntity.ok().body(ResponseUtils.FRIEND_REQUEST_ACCEPTED);
     }
+
+    private boolean areFriends(User user, User friend) {
+        return customFriends.existsBysenderAndfriends(user, friend)
+                || customFriends.existsByfriendsAndsender(friend, user);
+    }
+
 }

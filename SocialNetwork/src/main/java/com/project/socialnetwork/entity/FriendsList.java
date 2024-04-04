@@ -23,9 +23,6 @@ public class FriendsList {
     @JoinColumn(name = "friend_id")
     private User friend;
 
-    @ManyToOne
-    @JoinColumn(name="sender_name")
-    private User senderID;
 
     @Enumerated(EnumType.STRING)
     private RequestStaus requestStatus;

@@ -1,5 +1,6 @@
 package com.project.socialnetwork.controller;
 
+import com.project.socialnetwork.entity.User;
 import com.project.socialnetwork.service.FriendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class FriendRequestHandler {
     }
 
     @PostMapping("/{userId}/acceptFriendRequest/{friendId}")
-    public ResponseEntity<String> acceptFriendRequest(@PathVariable Long userId, @PathVariable Long friendId) {
+    public ResponseEntity<String> acceptFriendRequest(@PathVariable User userId, @PathVariable User friendId) {
         return friendsService.acceptFriendRequest(userId, friendId);
     }
 }
