@@ -12,7 +12,7 @@ public class CustomFriends extends FriendsList {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private  Long RequestID;
 
     @ManyToOne

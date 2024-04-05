@@ -7,14 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomFriendDao extends JpaRepository<CustomFriends,Long>{
-    boolean existsBysenderAndfriends(User user, User friend);
+public interface CustomFriendDao extends JpaRepository<CustomFriends, Long> {
 
-    boolean existsByfriendsAndsender(User friend, User user);
+    boolean existsBySenderAndFriend(User sender, User friend);
 
-    CustomFriends existsBysenderAndfriends(Long friendId, Long userId);
+    boolean existsByFriendAndSender(User friend, User sender);
 
-    void deletBySenderAndFriend(User userId, User friendId);
+    CustomFriends findBySenderAndFriend(User sender, User friend);
 
-    CustomFriends existsBySenderAndFriend(User friend, User user);
+    void deletBySenderAndFriend(User user, User friend);
 }

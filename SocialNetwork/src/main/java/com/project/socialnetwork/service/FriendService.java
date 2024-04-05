@@ -75,7 +75,7 @@ public class FriendService {
     }
 
     public ResponseEntity<String> acceptFriendRequest(User user, User friend) {
-        CustomFriends friendship = customFriends.existsBySenderAndFriend(friend, user);
+        CustomFriends friendship = customFriends.findBySenderAndFriend(friend, user);
 
         if (friendship == null) {
             return ResponseEntity.badRequest().body(ResponseUtils.FRIEND_REQUEST_NOT_FOUND);
@@ -91,8 +91,8 @@ public class FriendService {
     }
 
     private boolean areFriends(User user, User friend) {
-        return customFriends.existsBysenderAndfriends(user, friend)
-                || customFriends.existsByfriendsAndsender(friend, user);
+        return customFriends.existsBySenderAndFriend(user, friend)
+                || customFriends.existsByFriendAndSender(friend, user);
     }
 
 }
