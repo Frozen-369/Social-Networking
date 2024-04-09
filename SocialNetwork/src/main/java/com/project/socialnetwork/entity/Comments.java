@@ -11,21 +11,20 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserProfile {
+public class Comments {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long profile_id;
-    private String firstname;
-    private String lastname;
-    private String bio;
-    private String profile_pic_url;
-    private String address;
-    private String birthday;
+    private Long commentId;
 
-    @OneToOne
+    private String commentText;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
 
 }

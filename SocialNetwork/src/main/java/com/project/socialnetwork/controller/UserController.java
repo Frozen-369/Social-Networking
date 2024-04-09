@@ -1,16 +1,22 @@
 package com.project.socialnetwork.controller;
 
-import com.project.socialnetwork.entity.*;
+import com.project.socialnetwork.dao.LikeDao;
+import com.project.socialnetwork.dao.PostDao;
+import com.project.socialnetwork.dao.UserDao;
+import com.project.socialnetwork.entity.FriendsList;
+import com.project.socialnetwork.entity.Post;
+import com.project.socialnetwork.entity.User;
+import com.project.socialnetwork.entity.UserProfile;
 import com.project.socialnetwork.service.FriendService;
 import com.project.socialnetwork.service.LikeService;
 import com.project.socialnetwork.service.UserService;
 import com.project.socialnetwork.utils.ResponseUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -19,14 +25,18 @@ public class UserController {
     private final UserService userService;
 
     private final FriendService friendsService;
+    private final UserDao userDao;
 
     private final LikeService likeService;
+    private final PostDao postDao;
 
     @Autowired
-    public UserController(UserService userService, FriendService friendsService, LikeService likeService) {
+    public UserController(UserService userService, FriendService friendsService, UserDao userDao, LikeService likeService, LikeDao likeDao, PostDao postDao) {
         this.userService = userService;
         this.friendsService = friendsService;
+        this.userDao = userDao;
         this.likeService = likeService;
+        this.postDao = postDao;
     }
 
     @PostMapping("/registerUser")
@@ -48,7 +58,7 @@ public class UserController {
         return ResponseEntity.ok().body(ResponseUtils.USER_PROFILE_CREATE);
     }
 
-    
+
     @GetMapping("/getUserProfile/{userProfile_id}")
     public ResponseEntity<String> getUserProfileById(@PathVariable Long userProfile_id){
         User user = userService.getUserById(userProfile_id);
@@ -84,35 +94,83 @@ public class UserController {
 
     @GetMapping("/{user_id}/allfriends")
     public ResponseEntity<List<FriendsList>> seeFriendGroup(@PathVariable User user) {
-        List<FriendsList> friendsList = friendsService.getAllFriends(user.getUserId());
+        List<FriendsList> friendsList = friendsService.getAllFriends(user);
         return ResponseEntity.ok().body(friendsList);
     }
 
     @DeleteMapping("/{user_id}/allfriends/{friends_id}")
-    public ResponseEntity<String> unFriend(@PathVariable User user, @PathVariable User friends) {
-        friendsService.unFriend(user, friends);
+    public ResponseEntity<String> unFriend(@PathVariable Long user_id, @PathVariable Long friends_id) {
+        Optional<User> user = userDao.findById(user_id);
+        Optional<User> friend = userDao.findById(friends_id);
+        if (user.isEmpty() || friend.isEmpty()) {
+            return ResponseEntity.badRequest().body(ResponseUtils.USER_OR_FRIEND_NOT_FOUND);
+        }
+        friendsService.unFriend(user.orElse(null), friend.orElse(null));
         return ResponseEntity.ok().body(ResponseUtils.USER_UNFRIEND);
     }
 
     @PostMapping("/{user_id}/sendRequest/{friends_id}")
-    public ResponseEntity<String> sendRequest(@PathVariable User user, @PathVariable User friends){
-        friendsService.sendFriendRequest(user, friends);
+    public ResponseEntity<String> sendRequest(@PathVariable Long user_id, @PathVariable Long friends_id){
+        Optional<User> user = userDao.findById(user_id);
+        Optional<User> friend = userDao.findById(friends_id);
+        if (user.isEmpty() || friend.isEmpty()) {
+            return ResponseEntity.badRequest().body(ResponseUtils.USER_OR_FRIEND_NOT_FOUND);
+        }
+        friendsService.sendFriendRequest(user.orElse(null), friend.orElse(null));
         return ResponseEntity.ok().body(ResponseUtils.FRIEND_REQUEST_SENT);
     }
 
+
+    @PostMapping("/{user_id}/acceptFriendRequest/{friends_id}")
+    public ResponseEntity<String> acceptFriendRequest(@PathVariable Long user_id, @PathVariable Long friends_id){
+        Optional<User> user1 = userDao.findById(user_id);
+        Optional<User> friend = userDao.findById(friends_id);
+        if (user1.isEmpty() || friend.isEmpty()) {
+            return ResponseEntity.badRequest().body(ResponseUtils.USER_OR_FRIEND_NOT_FOUND);
+        }
+
+        friendsService.acceptFriendRequest(user1.orElse(null), friend.orElse(null));
+
+        return ResponseEntity.ok().body(ResponseUtils.FRIEND_REQUEST_ACCEPTED);
+    }
+
     @PostMapping("/post/{post_id}/like/{user_id}")
-    public ResponseEntity<String> likePost(@PathVariable Long post_id, @PathVariable User user){
-        likeService.likePost(post_id, user.getUserId());
+    public ResponseEntity<String> likePost(@PathVariable Long post_id, @PathVariable Long user_id){
+        Optional<Post> postID = postDao.findById(post_id);
+        Optional<User> user1 = userDao.findById(user_id);
+        if (postID.isEmpty() && user1.isEmpty()) {
+            return ResponseEntity.badRequest().body(ResponseUtils.USER_AND_POST_NOT_FOUND);
+        } else if (postID.isEmpty()) {
+            return ResponseEntity.badRequest().body(ResponseUtils.POST_NOT_CREATED);
+        } else if (user1.isEmpty()) {
+            return ResponseEntity.badRequest().body(ResponseUtils.USER_EMPTY);
+        }
+
+        Post post_ID = postID.get();
+        User user_ID = user1.get();
+
+        likeService.likePost(post_ID, user_ID);
+
         return ResponseEntity.ok().body(ResponseUtils.POST_LIKED);
     }
 
     @DeleteMapping("/post/{post_id}/unlike/{user_id}")
-    public ResponseEntity<String> unlikePost(@PathVariable Long post_id, @PathVariable User user){
-        likeService.unlikePost(post_id, user.getUserId());
+    public ResponseEntity<String> unlikePost(@PathVariable Long post_id, @PathVariable Long user_id){
+        Optional<Post> postID = postDao.findById(post_id);
+        Optional<User> user = userDao.findById(user_id);
+        if (postID.isEmpty() && user.isEmpty()) {
+            return ResponseEntity.badRequest().body(ResponseUtils.USER_AND_POST_NOT_FOUND);
+        } else if (postID.isEmpty()) {
+            return ResponseEntity.badRequest().body(ResponseUtils.POST_NOT_CREATED);
+        } else if (user.isEmpty()) {
+            return ResponseEntity.badRequest().body(ResponseUtils.USER_EMPTY);
+        }
+
+        Post post = postID.get();
+        User user_ID = user.get();
+        likeService.unlikePost(post, user_ID);
         return ResponseEntity.ok().body(ResponseUtils.POST_UNLIKED);
     }
-
-
 }
 
 

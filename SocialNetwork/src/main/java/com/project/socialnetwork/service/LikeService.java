@@ -23,19 +23,22 @@ public class LikeService {
         this.userDao = userDao;
     }
 
-    public void likePost(Long postId, Long userId) {
-        Post post = postDao.findById(postId).orElse(null);
-        User user = userDao.findById(userId).orElse(null);
+    public void likePost(Post postId, User userId) {
+        Long postIdValue = postId.getPost_id();
+        Long userIdValue = userId.getUserId();
+
+        Post post = postDao.findById(postIdValue).orElse(null);
+        User user = userDao.findById(userIdValue).orElse(null);
 
         if (post != null && user != null) {
             Likes likes = new Likes();
             likes.setPost(post);
-            likes.setUser_Id(userId);
+            likes.setUser(userId);
             likeDao.save(likes);
         }
     }
 
-    public void unlikePost(Long postId, Long userId) {
-        likeDao.deleteByPostIdAndUserId(postId, userId);
+    public void unlikePost(Post postId, User userId) {
+        likeDao.deleteByPostAndUser(postId, userId);
     }
 }

@@ -2,18 +2,22 @@ package com.project.socialnetwork.entity;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
-@Entity
+@Entity(name = "UserInfo")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userId;
 
     private String username;
@@ -28,6 +32,11 @@ public class User {
     private List<Post> posts;
 
     @OneToMany(mappedBy = "friend")
-    private List<FriendsList> friends;
+    private List<FriendsList> friendId;
+
+    public void removeFriend(User friend) {
+        friendId.removeIf(f -> f.getFriendId().equals(friend));
+        friend.getFriendId().removeIf(f -> f.getFriendId().equals(this));
+    }
 
 }

@@ -17,4 +17,7 @@ public class ResponseUtils {
     public static final String FRIEND_REQUEST_ACCEPTED = "Friend Request has been Accepted";
     public static final String POST_LIKED = "Post has been liked" ;
     public static final String POST_UNLIKED = "Post has been unliked";
+    public static final String USER_OR_FRIEND_NOT_FOUND = "User is not presnent ";
+    public static final String POST_NOT_CREATED = "Post has not been created";
+    public static final String USER_AND_POST_NOT_FOUND = "Please make sure that the fields are created ";
 }

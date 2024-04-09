@@ -1,6 +1,5 @@
 package com.project.socialnetwork.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,12 +24,14 @@ public class Post {
     private String creation_date;
     private String privacy_setting;
 
-    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "UserUid")
     private User user;
 
     @OneToMany(mappedBy = "post")
     private List<Likes> likes;
+
+    @OneToMany(mappedBy = "post")
+    private List<Comments> comments;
 
 }

@@ -18,11 +18,11 @@ public class Likes {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "postID")
     private Post post;
 
-
-    @Column(name = "user_id")
-    private Long user_Id;
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
 
 }

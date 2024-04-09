@@ -17,10 +17,10 @@ public class FriendsList {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long friendId;
 
     @ManyToOne
-    @JoinColumn(name = "friend_id")
+    @JoinColumn(name = "friend")
     private User friend;
 
 

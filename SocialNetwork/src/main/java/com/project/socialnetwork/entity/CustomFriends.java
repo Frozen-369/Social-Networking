@@ -1,14 +1,19 @@
 package com.project.socialnetwork.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.time.LocalDate;
 
 @Entity
 @Getter
 @Setter
-public class CustomFriends extends FriendsList {
+@AllArgsConstructor
+@NoArgsConstructor
+public class CustomFriends {
 
 
     @Id
@@ -16,12 +21,17 @@ public class CustomFriends extends FriendsList {
     private  Long RequestID;
 
     @ManyToOne
-    @JoinColumn(name = "sender_id")
+    @JoinColumn(name = "senderId")
     private User sender;
 
-    public CustomFriends() {
-        super();
-    }
+    @ManyToOne
+    @JoinColumn(name = "reciverId")
+    private User reciverId;
+
+    @Enumerated(EnumType.STRING)
+    private RequestStaus requestStatus;
+
+    private LocalDate friendSince;
 
 }
 
