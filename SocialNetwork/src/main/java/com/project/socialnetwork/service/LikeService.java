@@ -41,4 +41,8 @@ public class LikeService {
     public void unlikePost(Post postId, User userId) {
         likeDao.deleteByPostAndUser(postId, userId);
     }
+
+    public Long countPostLikes(Post postId) {
+        return likeDao.countByPost(postId);
+    }
 }

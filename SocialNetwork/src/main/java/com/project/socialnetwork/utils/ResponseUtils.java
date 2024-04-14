@@ -20,4 +20,9 @@ public class ResponseUtils {
     public static final String USER_OR_FRIEND_NOT_FOUND = "User is not presnent ";
     public static final String POST_NOT_CREATED = "Post has not been created";
     public static final String USER_AND_POST_NOT_FOUND = "Please make sure that the fields are created ";
+    public static final String COMMENTSADDED = "Comments has been added";
+    public static final Object USERNOTFOUND = "Please enter the correct userid";
+    public static final Object COMMENTSEMPTY = "Your comments cannot be Empty";
+    public static final String COMMENT_HAS_BEEN_EDITED = "Comment edited successfully.";
+    public static final String COMMENTS_DELETED = "Comment has been deleted" ;
 }

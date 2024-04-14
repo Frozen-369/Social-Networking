@@ -43,6 +43,7 @@ public class UserService {
         }
         return user;
     }
+
     public void createProfile(UserProfile userProfile, Long userId){
         Optional<User> userOptional = Optional.ofNullable(getUserById(userId));
         if(userOptional.isPresent()){
@@ -83,10 +84,6 @@ public class UserService {
             throw new NotFoundException("User not found.");
         }
     }
-
-
-
-
 
     public void postDetails(Post postDetails, Long user_id) {
 

@@ -1,10 +1,10 @@
 package com.project.socialnetwork.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.lang.NonNull;
+
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -17,7 +17,6 @@ public class Comments {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
 
-    private String commentText;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
@@ -27,4 +26,8 @@ public class Comments {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @NonNull
+    private String commentText;
+
+    private LocalDate createdAt;
 }

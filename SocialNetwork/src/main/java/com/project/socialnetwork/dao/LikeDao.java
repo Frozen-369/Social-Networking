@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface LikeDao extends JpaRepository<Likes,Long> {
 
     void deleteByPostAndUser(Post postId, User userId);
+
+    Long countByPost(Post post);
 }

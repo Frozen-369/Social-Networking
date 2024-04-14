@@ -1,18 +1,19 @@
 package com.project.socialnetwork.controller;
 
+import com.project.socialnetwork.dao.CommentsDao;
 import com.project.socialnetwork.dao.LikeDao;
 import com.project.socialnetwork.dao.PostDao;
 import com.project.socialnetwork.dao.UserDao;
-import com.project.socialnetwork.entity.FriendsList;
-import com.project.socialnetwork.entity.Post;
-import com.project.socialnetwork.entity.User;
-import com.project.socialnetwork.entity.UserProfile;
+import com.project.socialnetwork.entity.*;
+import com.project.socialnetwork.service.CommentService;
 import com.project.socialnetwork.service.FriendService;
 import com.project.socialnetwork.service.LikeService;
 import com.project.socialnetwork.service.UserService;
 import com.project.socialnetwork.utils.ResponseUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -29,14 +30,18 @@ public class UserController {
 
     private final LikeService likeService;
     private final PostDao postDao;
+    private final CommentsDao commentsDao;
+    private final CommentService commentService;
 
     @Autowired
-    public UserController(UserService userService, FriendService friendsService, UserDao userDao, LikeService likeService, LikeDao likeDao, PostDao postDao) {
+    public UserController(UserService userService, FriendService friendsService, UserDao userDao, LikeService likeService, LikeDao likeDao, PostDao postDao, CommentsDao commentsDao, CommentService commentService) {
         this.userService = userService;
         this.friendsService = friendsService;
         this.userDao = userDao;
         this.likeService = likeService;
         this.postDao = postDao;
+        this.commentsDao = commentsDao;
+        this.commentService = commentService;
     }
 
     @PostMapping("/registerUser")
@@ -110,7 +115,7 @@ public class UserController {
     }
 
     @PostMapping("/{user_id}/sendRequest/{friends_id}")
-    public ResponseEntity<String> sendRequest(@PathVariable Long user_id, @PathVariable Long friends_id){
+    public ResponseEntity<String> sendRequest(@PathVariable Long user_id, @PathVariable Long friends_id,@RequestBody CustomFriends customFriends,@RequestBody FriendsList friendsList){
         Optional<User> user = userDao.findById(user_id);
         Optional<User> friend = userDao.findById(friends_id);
         if (user.isEmpty() || friend.isEmpty()) {
@@ -122,7 +127,7 @@ public class UserController {
 
 
     @PostMapping("/{user_id}/acceptFriendRequest/{friends_id}")
-    public ResponseEntity<String> acceptFriendRequest(@PathVariable Long user_id, @PathVariable Long friends_id){
+    public ResponseEntity<String> acceptFriendRequest(@PathVariable Long user_id, @PathVariable Long friends_id ,@RequestBody CustomFriends customFriends,@RequestBody FriendsList friendsList){
         Optional<User> user1 = userDao.findById(user_id);
         Optional<User> friend = userDao.findById(friends_id);
         if (user1.isEmpty() || friend.isEmpty()) {
@@ -135,7 +140,7 @@ public class UserController {
     }
 
     @PostMapping("/post/{post_id}/like/{user_id}")
-    public ResponseEntity<String> likePost(@PathVariable Long post_id, @PathVariable Long user_id){
+    public ResponseEntity<String> likePost(@PathVariable Long post_id, @PathVariable Long user_id ,@RequestBody Likes likes){
         Optional<Post> postID = postDao.findById(post_id);
         Optional<User> user1 = userDao.findById(user_id);
         if (postID.isEmpty() && user1.isEmpty()) {
@@ -151,11 +156,13 @@ public class UserController {
 
         likeService.likePost(post_ID, user_ID);
 
-        return ResponseEntity.ok().body(ResponseUtils.POST_LIKED);
+        Long totalLikes = likeService.countPostLikes(post_ID);
+
+        return ResponseEntity.ok().body("Post liked. Total likes: " + totalLikes);
     }
 
     @DeleteMapping("/post/{post_id}/unlike/{user_id}")
-    public ResponseEntity<String> unlikePost(@PathVariable Long post_id, @PathVariable Long user_id){
+    public ResponseEntity<String> unlikePost(@PathVariable Long post_id, @PathVariable Long user_id,@RequestBody Likes likes){
         Optional<Post> postID = postDao.findById(post_id);
         Optional<User> user = userDao.findById(user_id);
         if (postID.isEmpty() && user.isEmpty()) {
@@ -169,7 +176,63 @@ public class UserController {
         Post post = postID.get();
         User user_ID = user.get();
         likeService.unlikePost(post, user_ID);
-        return ResponseEntity.ok().body(ResponseUtils.POST_UNLIKED);
+
+        Long totalLikes = likeService.countPostLikes(post);
+
+        return ResponseEntity.ok().body("Post unliked. Total likes: " + totalLikes);
+    }
+
+    @PostMapping("/comments")
+    public ResponseEntity<String> writeComments(@RequestBody Comments comments){
+        commentService.writeComments(comments);
+        return ResponseEntity.ok().body(ResponseUtils.COMMENTSADDED);
+    }
+
+    @GetMapping("/{postId}/comments")
+    public ResponseEntity<Page<Comments>> viewCommentsByPostId(
+            @PathVariable("postId") Long postId,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "5") int size) {
+        Page<Comments> commentsPage = commentService.viewAllComments(postId, page, size);
+        Long totalComments= commentService.getTotalCount(commentsPage);
+        return new ResponseEntity<>(commentsPage, HttpStatus.OK);
+    }
+
+    @DeleteMapping("{postID}/deleteComments/{commentID}")
+    public ResponseEntity<String> deleteCommentsById(@PathVariable Long postID,@PathVariable Long commentID) {
+        Optional<Post> checkPostID = postDao.findById(postID);
+        if (checkPostID.isPresent()) {
+            Post post_ID = checkPostID.get();
+            Optional<Comments> checkCommentsID = commentsDao.findById(commentID);
+            if (checkCommentsID.isPresent()) {
+                Comments comments_Id = checkCommentsID.get();
+                commentService.deleteComments(post_ID, comments_Id);
+                return  ResponseEntity.ok().body(ResponseUtils.COMMENTS_DELETED);
+            }else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid commentsID.");
+            }
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid postId.");
+        }
+    }
+
+    @PostMapping("{postID}/editComments/")
+    public ResponseEntity<String> editComments(@PathVariable Long postID,@RequestBody Comments editedcomments){
+        Optional<Post> findPost = postDao.findById(postID);
+
+        if (findPost.isPresent()) {
+            Long commentId = editedcomments.getCommentId();
+            Optional<Comments> storeComments = commentsDao.findById(commentId);
+
+            if (storeComments.isPresent()) {
+                commentService.editComments(editedcomments);
+                return ResponseEntity.ok(ResponseUtils.COMMENT_HAS_BEEN_EDITED);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid commentsID.");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid postId.");
+        }
     }
 }
 
